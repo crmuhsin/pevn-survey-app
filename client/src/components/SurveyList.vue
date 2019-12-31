@@ -18,9 +18,10 @@
             <td>{{ item.surveyname }}</td>
             <td>{{ item.slug }}</td>
             <td>
-                <router-link tag="button" class="btn btn-primary btn-sm mr-3" :to="{name:'Survey View', params:{survey:item.slug}}">View</router-link>
-                <button @click="edit(item)" class="btn btn-warning btn-sm mr-3">Edit</button>
-                <button @click="destroy(item)" class="btn btn-danger btn-sm">Delete</button>
+                <router-link tag="button" class="btn btn-primary btn-sm mr-3" :to="{name:'Survey Preview', params:{survey:item.slug}}">View</router-link>
+                <router-link tag="button" class="btn btn-warning btn-sm mr-3" :to="{name:'Questions', params:{survey:item.slug}}">Edit</router-link>
+                <router-link tag="button" class="btn btn-secondary btn-sm mr-3" :to="{name:'Response List', params:{survey:item.slug}}">Responses</router-link>
+                <!-- <button @click="destroy(item)" class="btn btn-danger btn-sm">Delete</button> -->
             </td>
           </tr>
         </tbody>

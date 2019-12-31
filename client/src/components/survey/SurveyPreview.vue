@@ -3,10 +3,10 @@
     <div class="loader" v-if="loader"></div>
     <div class="row" v-else>
         <div class="col-12">
-            <router-link tag="button" class="btn btn-primary float-right" :to="{name:'Questions', params:{survey:$route.params.survey}}">Add Questions in this Survey</router-link>
+            <router-link tag="button" class="btn btn-warning float-right" :to="{name:'Questions', params:{survey:$route.params.survey}}">Edit</router-link>
             <div class="col-8">
                 <label>Survey Name</label>
-                <p>{{survey.surveyname}}</p>
+                <h3><p>{{survey.surveyname}}</p></h3>
             </div>
             
         </div>
@@ -29,7 +29,7 @@
                             <LongText v-if="item.qtype=='longText'" :setter="false"/>
                             <ShortText v-else-if="item.qtype=='shortText'"  :setter="false"/>
                             <Dropdown v-else-if="item.qtype=='dropdown'" :choices="item.qchoices"  :setter="false"/>
-                            <Radio v-else-if="item.qtype=='radio'" :choices="item.qchoices"  :setter="false" @sendValue="getAnswer(item)"/>
+                            <Radio v-else-if="item.qtype=='radio'" :choices="item.qchoices"  :setter="false"/>
                         </p>
                     </div>
                 </div>
@@ -66,10 +66,6 @@ export default {
         this.getQuestions();
     },
     methods: {
-        getAnswer(variable, item){
-            variable.answer = item.send_value
-            console.log(variable);
-        },
         getQuestions(){
             this.loader = true;
             let body = { slug:this.$route.params.survey }

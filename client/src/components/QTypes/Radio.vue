@@ -4,16 +4,19 @@
         <span id="parentradio" v-for="(item, index) in choices" :key="index">
             <span class="form-check col-6">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input" disabled name="optradio">
+                    <input type="radio" class="form-check-input" disabled>
                     <span class="radio-text">
-                        <h6 class="check-title">{{item.r_name||item.r_name_placeholder}}</h6>
-                        <input type="text" class="form-control col-6" v-model="item.r_name" placeholder="OptionText">
+                        <h6 class="check-title">{{item.r_name||r_name_placeholder}}</h6>
+                        <input type="text" class="form-control col-6" v-model="item.r_name" @keyup="checkDuplicate" placeholder="OptionText">
                     </span>
                 </label>
-                <i class="fas fa-trash float-right" @click="deleteItem(choices, index)"></i>
+                <i class="fas fa-trash float-right" @click="deleteItem(index)"></i>
             </span>
         </span>
-        <i class="fas fa-plus" @click="addItem(choices)"></i>
+        <div class="alert alert-danger" v-if="error">
+            <span>{{error}}</span>
+        </div>
+        <i class="fas fa-plus" @click="addItem()"></i>
     </span>
     <span v-else>
         <span id="parentradio" v-for="(item, index) in choices" :key="index">
@@ -41,26 +44,59 @@ export default {
             required: true,
             note: 'Choice Array',
         },
+        answer: {
+            type: String,
+            required: false,
+            note: 'answer',
+        }
     },    
     data(){
         return {
-            send_value: ''
+            send_value: '',
+            error: '',
+            r_name_placeholder: "OptionText", 
+            button_disable: false
         }
     },
+    created(){
+        this.send_value = this.answer;
+        this.checkDuplicate()
+    },
     methods:{
-        addItem(item) {
-            item.push({
-                r_name_placeholder: "OptionText", 
-                r_name: ""
-            });
+        addItem() {
+            this.choices.push({r_name: ""});
+            this.checkDuplicate()
         },
-        deleteItem(choices, index) { 
-            choices.splice(index, 1); 
+        deleteItem(index) { 
+            this.choices.splice(index, 1); 
+            this.checkDuplicate()
         },
+        checkDuplicate(){
+            let result = this.choices.map(function(item) {return item.r_name;});
+            console.log(result);
+            if (result.length == 0) {
+                this.error = 'At least one item needed';
+                this.button_disable = true;
+            }
+            else if(result.includes('')){
+                this.error = 'Enter a value';
+                this.button_disable = true;
+            }
+            else if((new Set(result)).size != result.length){
+                this.error = 'Cannot input duplicate entry.';
+                this.button_disable = true;
+            } else {
+                this.error = '';
+                this.button_disable = false;
+            }
+        }
     },
     watch:{
         send_value(){
             this.$emit("sendValue", this.send_value);
+        },
+        button_disable(){
+            this.$emit("buttonDisable", this.button_disable);
         }
     }
 }

@@ -4,12 +4,12 @@ const AppShell = () => import('@/components/AppShell')
 const Login = () => import('@/components/auth/Login')
 const Register = () => import('@/components/auth/Register')
 const Dashboard = () => import('@/components/Dashboard')
-const SurveyView = () => import('@/components/survey/SurveyView')
-const SurveyList = () => import('@/components/survey/SurveyList')
+const SurveyList = () => import('@/components/SurveyList')
+const SurveyPreview = () => import('@/components/survey/SurveyPreview')
 const SurveySaveUpdate = () => import('@/components/survey/SurveySaveUpdate')
-// const Survey = () => import('@/components/survey/Survey')
-const Result = () => import('@/components/survey/SurveyView')
 const Questions = () => import('@/components/survey/Questions')
+const ResponseList = () => import('@/components/response/ResponseList')
+const NewResponse = () => import('@/components/response/ResponseSaveUpdate')
 
 Vue.use(Router)
 
@@ -64,10 +64,10 @@ export default new Router({
                     meta: { title: 'New Survey', requriesAuth: true}
                 },
                 {
-                    path: '/survey-view/:survey',
-                    name: 'Survey View',
-                    component: SurveyView,
-                    meta: { title: 'Survey View', requriesAuth: true }
+                    path: '/survey-preview/:survey',
+                    name: 'Survey Preview',
+                    component: SurveyPreview,
+                    meta: { title: 'Survey Preview', requriesAuth: true }
                 },                
                 {
                     path: '/questions/:survey',
@@ -76,11 +76,17 @@ export default new Router({
                     meta: { title: 'Questions', requriesAuth: true}
                 },
                 {
-                    path: '/results',
-                    name: 'Result',
-                    component: Result,
-                    meta: { title: 'Result', requriesAuth: true }
-                },                
+                    path: '/responses/:survey',
+                    name: 'Response List',
+                    component: ResponseList,
+                    meta: { title: 'Response List', requriesAuth: true }
+                }, 
+                {
+                    path: '/create-response/:survey',
+                    name: 'New Response',
+                    component: NewResponse,
+                    meta: { title: 'New Response', requriesAuth: true }
+                }, 
             ]
         }
     ],

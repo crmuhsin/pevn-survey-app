@@ -21,7 +21,7 @@
 							<router-link class="nav-link" :to="{name:'Survey List'}">Survey</router-link>
 						</li>
 						<li class="nav-item">
-							<router-link class="nav-link" :to="{name:'Result'}">Result</router-link>
+							<!-- <router-link class="nav-link" :to="{name:'Response List'}">Response</router-link> -->
 						</li>
 					</ul>
 				</div>

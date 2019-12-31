@@ -17,14 +17,14 @@
                 </div>
                 <div class="card-body">
                     <span class="question-text">
-                        <h5 class="card-title">{{item.q_name||item.q_name_placeholder}}</h5>
+                        <h5 class="card-title">{{item.q_name||q_name_placeholder}}</h5>
                         <input type="text" class="form-control col-6" v-model="item.q_name" placeholder="Enter Survey Question">
                     </span>
                     <p class="card-text mt-2">
                         <LongText v-if="item.qtype=='longText'" :setter="true"/>
                         <ShortText v-else-if="item.qtype=='shortText'" :setter="true"/>
                         <Dropdown v-else-if="item.qtype=='dropdown'" :choices="item.qchoices" :setter="true"/>
-                        <Radio v-else-if="item.qtype=='radio'" :choices="item.qchoices" :setter="true"/>
+                        <Radio v-else-if="item.qtype=='radio'" :choices="item.qchoices" :setter="true" @buttonDisable="buttonDisable"/>
                     </p>
                 </div>
                 <div class="card-footer">
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <i class="fas fa-plus mr-4 float-right" @click="addItem(questions)"></i>
-            <button class="btn btn-primary mx-auto col-2" type="submit" @click.prevent="questionSaveUpdate()">{{ buttonText }}</button>
+            <button class="btn btn-primary mx-auto col-2" type="submit" :disabled="button_disable" @click.prevent="questionSaveUpdate()">{{ buttonText }}</button>
         </div>
 
         <div class="col-4">
@@ -70,12 +70,14 @@ export default {
                 { qtype:'radio', title:'Multiple Choice', choices: []},
                 { qtype:'dropdown', title:'Dropdown', choices: []},
             ],
+            q_name_placeholder: "Enter Survey Question", 
             enableToast: false,
             loader: false,
             toastText: 'asa',
             buttonText: 'Save',
-            error: "",
+            error: false,
             isUpdate: false,
+            button_disable:false
         }
     },
     mounted(){
@@ -84,15 +86,17 @@ export default {
     methods:{
         addItem(item) {
             item.push({
-                q_name_placeholder: "Enter Survey Question", 
                 q_name: "",
                 qtype: "radio",
-                qchoices: [],
+                qchoices: [{r_name:''}],
                 is_required: true
             });
         },
         deleteItem(questions, index) { 
             questions.splice(index, 1); 
+        },
+        buttonDisable(variable){
+            this.button_disable = variable;
         },
         getQuestions(){
             this.loader = true;
@@ -109,32 +113,56 @@ export default {
                 console.log(error)
             })
         },
-        questionSaveUpdate(){
-            this.loader = true;
-            let http_url;
-            if (this.isUpdate) {
-                http_url = url.questions_update;
-            } else {
-            console.log(this.isUpdate);
-                http_url = url.questions_save;
+        checkQuestions(){
+            let result = this.questions.map(function(item) {return item.q_name;});
+            if (result.length == 0) {
+                this.toastText = 'At least one item needed';
+                this.error = true;
             }
-            let body = {questions: JSON.stringify(this.questions), slug:this.$route.params.survey}
-            body = _.clone(body);
-            service.onPost(http_url, body)
-            .then(result => {
-                this.loader = false;
+            else if(result.includes('')){
+                this.toastText =  "Some Question Names are not set.";
+                this.error = true;
+            }
+            else{
+                this.error = false;
+            }
+        },
+        questionSaveUpdate(){
+            this.checkQuestions()
+            if (this.error) {
                 this.enableToast = true;
-                if (result.status != 200){
-                    this.color = "red"; 
-                    this.toastText =  "Something Went wrong";
-                    return;
+                this.color = "red"; 
+                setTimeout(() => {
+                    this.enableToast = false;
+                }, 2000);
+                return;
+            } else {
+                this.loader = true;
+                let http_url;
+                if (this.isUpdate) {
+                    http_url = url.questions_update;
+                } else {
+                console.log(this.isUpdate);
+                    http_url = url.questions_save;
                 }
-                this.color = "green"; 
-                this.toastText = "Survey saved successfully."
-                setTimeout( () => this.$router.push({name:'Survey View', params:{survey:this.$route.params.survey}}), 3000);
-            }).catch(error => {
-                console.log(error)
-            })
+                let body = {questions: JSON.stringify(this.questions), slug:this.$route.params.survey}
+                body = _.clone(body);
+                service.onPost(http_url, body)
+                .then(result => {
+                    this.loader = false;
+                    this.enableToast = true;
+                    if (result.status != 200){
+                        this.color = "red"; 
+                        this.toastText =  "Something Went wrong";
+                        return;
+                    }
+                    this.color = "green"; 
+                    this.toastText = "Survey saved successfully."
+                    setTimeout( () => this.$router.push({name:'Survey Preview', params:{survey:this.$route.params.survey}}), 3000);
+                }).catch(error => {
+                    console.log(error)
+                })
+            }
 		}
     }
 }

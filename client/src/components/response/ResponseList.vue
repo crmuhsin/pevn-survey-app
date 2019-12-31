@@ -7,21 +7,19 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Survey Name</th>
-            <th>Slug</th>
+            <th>Responder</th>
+            <th>Email</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in surveys" :key="index">
+          <tr v-for="(item, index) in responses" :key="index">
             <td>{{ index + 1 }}</td>
-            <td>{{ item.surveyname }}</td>
-            <td>{{ item.slug }}</td>
+            <td>{{ item.respondername }}</td>
+            <td>{{ item.email }}</td>
             <td>
-                <router-link tag="button" class="btn btn-primary btn-sm mr-3" :to="{name:'Survey Preview', params:{survey:item.slug}}">View</router-link>
-                <router-link tag="button" class="btn btn-warning btn-sm mr-3" :to="{name:'Questions', params:{survey:item.slug}}">Edit</router-link>
-                <router-link tag="button" class="btn btn-secondary btn-sm mr-3" :to="{name:'Response List', params:{survey:item.slug}}">Responses</router-link>
-                <!-- <button @click="destroy(item)" class="btn btn-danger btn-sm">Delete</button> -->
+                <!-- <router-link tag="button" class="btn btn-primary btn-sm mr-3" :to="{name:'Survey Preview', params:{survey:item.slug}}">View</router-link> -->
+                <router-link tag="button" class="btn btn-secondary btn-sm mr-3" :to="{name:'New Response', params:{survey:$route.params.survey}}">Give Response</router-link>
             </td>
           </tr>
         </tbody>
@@ -44,7 +42,7 @@ import * as _ from 'underscore';
 export default {
     data() {
         return {
-            surveys: [],
+            responses: [{respondername:'boss', email:'boss@boss'}],
             enableToast: false,
             loader: false,
             toastText: 'asa',

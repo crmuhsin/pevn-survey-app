@@ -1,7 +1,7 @@
 <template>
 <span>
     <textarea class="form-control col-6" cols="50" rows="3" readonly v-if="setter">Long Text</textarea>
-    <textarea class="form-control col-6" cols="50" rows="3" v-else></textarea>
+    <textarea class="form-control col-6" cols="50" rows="3" v-model="send_value" v-else></textarea>
 </span>
 </template>
 
@@ -13,7 +13,25 @@ export default {
             required: true,
             note: 'is Setter or is Getter',
         },
+        answer: {
+            type: String,
+            required: false,
+            note: 'answer',
+        },
     },
+    created(){
+        this.send_value = this.answer;
+    },
+    data(){
+        return {
+            send_value: ''
+        }
+    },
+    watch:{
+        send_value(){
+            this.$emit("sendValue", this.send_value);
+        }
+    }
 }
 </script>
 

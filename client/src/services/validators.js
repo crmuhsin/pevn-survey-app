@@ -55,6 +55,10 @@ export const validators = {
         else if (!formData.surveyslug) {
             return 'Survey Slug required.';
         }
-        
+    },
+    radioField(data){
+        if (!data.value) {
+            return 'This field is required.';
+        }
     },
 }

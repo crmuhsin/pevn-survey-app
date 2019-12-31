@@ -9,6 +9,10 @@ export const url = {
     questions_save: "questions/save",
     questions_get_by_id: "questions/get-by-id",
     questions_update: "questions/update",
+    
+    response_save: "response/save",
+    response_get_by_id: "response/get-by-id",
+    response_update: "response/update",
 
     survey_check_slug: "survey/check-slug",
     survey_get_list: "survey/get-list",
