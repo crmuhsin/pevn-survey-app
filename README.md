@@ -1,4 +1,4 @@
-# survey-app
+# pevn-survey-app
 A simple minimalistic app with
 
 Client Side - VueJS
@@ -9,7 +9,7 @@ Database - PostgreSQL
 
 ## Download
 ``` shell
-$ git clone https://github.com/crmuhsin/survey-app.git
+$ git clone https://github.com/crmuhsin/pevn-survey-app.git
 ```
 
 ## Run Client Side
@@ -40,4 +40,4 @@ DATABASE_URL=postgres://username:password@127.0.0.1:5432/databasename
 </div>
 
 ## Contributions
-We welcome all contributions.You can submit any ideas as [pull requests](https://github.com/crmuhsin/survey-app/pulls) or as GitHub [issues](https://github.com/crmuhsin/survey-app/issues).  
+We welcome all contributions.You can submit any ideas as [pull requests](https://github.com/crmuhsin/pevn-survey-app/pulls) or as GitHub [issues](https://github.com/crmuhsin/pevn-survey-app/issues).  
