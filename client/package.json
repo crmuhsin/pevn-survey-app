@@ -10,8 +10,11 @@
   "dependencies": {
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
+    "html2canvas": "^1.0.0-rc.5",
     "jquery": "^3.4.1",
+    "jspdf": "^1.5.3",
     "moment": "^2.24.0",
+    "pdfmake": "^0.1.63",
     "popper.js": "^1.16.0",
     "underscore": "^1.9.1",
     "vue": "^2.6.6",

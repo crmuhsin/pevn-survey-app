@@ -11,14 +11,15 @@ const Responses = {
      */
     async save(req, res) {
         const saveQuery = `INSERT INTO
-      responses(responseid, slug, fullresponse, responder, created_at, updated_at)
-      VALUES($1, $2, $3, $4, $5, $6)
+      responses(responseid, slug, fullresponse, responder, email, created_at, updated_at)
+      VALUES($1, $2, $3, $4, $5, $6, $7)
       returning *`;
         const values = [
             "response-" + Helper.generateId(),
             req.body.slug,
             req.body.responses,
-            req.user.username,
+            req.body.responder,
+            req.body.email,
             moment(new Date()),
             moment(new Date())
         ];
@@ -53,11 +54,11 @@ const Responses = {
      * @returns {object} responses object
      */
     async getOne(req, res) {
-        const text = 'SELECT * FROM responses where responder = $1 and slug =$2';
+        const text = 'SELECT * FROM responses where responseid =$1';
         try {
-            const { rows } = await db.query(text, [req.user.username, req.body.slug]);
+            const { rows } = await db.query(text, [req.body.id]);
             if (!rows[0]) {
-                return res.status(200).send(rows[0]);
+                return res.status(200).send({'message':'no data'});
             }
             return res.status(200).send(rows[0]);
         } catch (error) {
@@ -75,7 +76,7 @@ const Responses = {
         const updateOneQuery = `UPDATE responses
       SET fullresponse=$1, updated_at=$2 WHERE slug=$3 returning *`;
         try {
-            const { rows } = await db.query(findOneQuery, [req.body.slug]);
+            const { rows } = await db.query(findOneQuery, [req.user.username, req.body.slug]);
             if (!rows[0]) {
                 return res.status(200).send({ 'message': 'responses not found' });
             }

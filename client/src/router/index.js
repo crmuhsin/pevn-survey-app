@@ -10,6 +10,7 @@ const SurveySaveUpdate = () => import('@/components/survey/SurveySaveUpdate')
 const Questions = () => import('@/components/survey/Questions')
 const ResponseList = () => import('@/components/response/ResponseList')
 const NewResponse = () => import('@/components/response/ResponseSaveUpdate')
+const Profile = () => import('@/components/user/UserProfile')
 
 Vue.use(Router)
 
@@ -52,12 +53,6 @@ export default new Router({
                     meta: { title: 'Dashboard', requriesAuth: true}
                 },
                 {
-                    path: '/survey-list',
-                    name: 'Survey List',
-                    component: SurveyList,
-                    meta: { title: 'Survey List', requriesAuth: true}
-                },
-                {
                     path: '/new-survey',
                     name: 'New Survey',
                     component: SurveySaveUpdate,
@@ -82,10 +77,22 @@ export default new Router({
                     meta: { title: 'Response List', requriesAuth: true }
                 }, 
                 {
+                    path: '/survey-list-response',
+                    name: 'Survey List',
+                    component: SurveyList,
+                    meta: { title: 'Survey List', requriesAuth: false }
+                },
+                {
                     path: '/create-response/:survey',
                     name: 'New Response',
                     component: NewResponse,
-                    meta: { title: 'New Response', requriesAuth: true }
+                    meta: { title: 'New Response', requriesAuth: false }
+                }, 
+                {
+                    path: '/profile',
+                    name: 'Profile',
+                    component: Profile,
+                    meta: { title: 'Profile', requriesAuth: true }
                 }, 
             ]
         }

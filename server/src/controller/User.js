@@ -87,6 +87,21 @@ const User = {
         } catch (error) {
             return res.status(400).send(error);
         }
+    },
+    /**
+    * Check A User Exists
+    * @param {object} req
+    * @param {object} res
+    * @returns {void} return status code 200
+    */
+    async checkUser(req, res) {
+        const text = `SELECT * FROM users WHERE email = $1`;
+        try {
+            const { rows, rowCount } = await db.query(text, [req.body.email]);
+            return res.status(200).send({ rows, rowCount });
+        } catch (error) {
+            return res.status(400).send(error)
+        }
     }
 }
 

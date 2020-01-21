@@ -1,16 +1,16 @@
 <template>
 <span>
     <span v-if="setter">
-        <span id="parentradio" v-for="(item, index) in choices" :key="index">
-            <span class="form-check col-6">
+        <span class="row ml-2">
+            <span class="form-check col-6" v-for="(item, index) in choices" :key="index">
                 <label class="form-check-label">
                     <input type="radio" class="form-check-input" disabled>
                     <span class="radio-text">
-                        <h6 class="check-title">{{item.r_name||r_name_placeholder}}</h6>
-                        <input type="text" class="form-control col-6" v-model="item.r_name" @keyup="checkDuplicate" placeholder="OptionText">
+                        <h6 class="check-title text-wrap" style="max-width: 200px;">{{item.r_name||r_name_placeholder}}</h6>
+                        <input type="text" class="form-control form-control-sm" v-model="item.r_name" @keyup="checkDuplicate" placeholder="OptionText">
                     </span>
                 </label>
-                <i class="fas fa-trash float-right" @click="deleteItem(index)"></i>
+                <i class="fas fa-trash ml-3" @click="deleteItem(index)"></i>
             </span>
         </span>
         <div class="alert alert-danger" v-if="error">
@@ -19,8 +19,8 @@
         <i class="fas fa-plus" @click="addItem()"></i>
     </span>
     <span v-else>
-        <span id="parentradio" v-for="(item, index) in choices" :key="index">
-            <span class="form-check col-6">
+        <span class="row ml-2">
+            <span class="form-check col-6"  v-for="(item, index) in choices" :key="index">
                 <label class="form-check-label">
                     <input type="radio" class="form-check-input" :value="item.r_name" v-model="send_value">
                     <h6>{{item.r_name}}</h6>
@@ -45,7 +45,7 @@ export default {
             note: 'Choice Array',
         },
         answer: {
-            type: String,
+            type: Array,
             required: false,
             note: 'answer',
         }
@@ -58,8 +58,7 @@ export default {
             button_disable: false
         }
     },
-    created(){
-        this.send_value = this.answer;
+    created(){  
         this.checkDuplicate()
     },
     methods:{
@@ -73,7 +72,6 @@ export default {
         },
         checkDuplicate(){
             let result = this.choices.map(function(item) {return item.r_name;});
-            console.log(result);
             if (result.length == 0) {
                 this.error = 'At least one item needed';
                 this.button_disable = true;
@@ -93,6 +91,13 @@ export default {
     },
     watch:{
         send_value(){
+            if (this.answer) {
+                let string = ''
+                this.answer.forEach(element => {
+                    string.push(element);
+                });
+                this.send_value = string;
+            }      
             this.$emit("sendValue", this.send_value);
         },
         button_disable(){

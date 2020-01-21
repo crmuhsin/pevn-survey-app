@@ -61,4 +61,34 @@ export const validators = {
             return 'This field is required.';
         }
     },
+    responseMail(formData) {
+        if (formData.email && formData.name) {
+            let re = /\S+@\S+\.\S+/;
+            if (!re.test(formData.email)) {
+                return 'Invalid Email';
+            }
+            return '';
+        }
+        else if (!formData.name) {
+            return 'Name required.';
+        }
+        else if (!formData.email) {
+            return 'Email required.';
+        }
+    },
+    responseSave(data) {
+        if (formData.email && formData.name) {
+            let re = /\S+@\S+\.\S+/;
+            if (!re.test(formData.email)) {
+                return 'Invalid Email';
+            }
+            return '';
+        }
+        else if (!formData.name) {
+            return 'Name required.';
+        }
+        else if (!formData.email) {
+            return 'Email required.';
+        }
+    },
 }

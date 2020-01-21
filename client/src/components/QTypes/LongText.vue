@@ -1,7 +1,7 @@
 <template>
 <span>
-    <textarea class="form-control col-6" cols="50" rows="3" readonly v-if="setter">Long Text</textarea>
-    <textarea class="form-control col-6" cols="50" rows="3" v-model="send_value" v-else></textarea>
+    <textarea class="form-control form-control-sm col-6" cols="50" rows="3" readonly v-if="setter">Long Text</textarea>
+    <textarea class="form-control form-control-sm col-6" cols="50" rows="3" v-model="send_value" v-else></textarea>
 </span>
 </template>
 
@@ -20,7 +20,9 @@ export default {
         },
     },
     created(){
-        this.send_value = this.answer;
+        if (this.answer) {
+            this.send_value = this.answer;
+        }
     },
     data(){
         return {

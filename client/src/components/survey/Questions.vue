@@ -1,52 +1,60 @@
 <template>
 <div class="container">
+    <div class="row mb-3">
+        <div class="col-12">
+            <router-link tag="button" class="btn btn-sm btn-warning float-left" :to="{name:'Survey Preview', params:{survey:$route.params.survey}}">Back</router-link>
+        </div>
+    </div>
     <div class="loader" v-if="loader"></div>
     <div class="row" v-else>
-        <div class="col-8">
-            <div class="card mb-4" v-for="(item, index) in questions" :key="index">
-                <div class="card-header">
-                    Question No {{index+1}}
-                    <div class="dropdown float-right">
-                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Choose Question Type
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" v-for="(types, index) in qtypeList" :key="index" @click="item.qtype=types.qtype, item.qchoices=types.choices">{{ types.title }}</a>
+        <div class="col-3">
+            <ul class="list-group">
+                <li class="list-group-item py-2" draggable="true" @dragstart="drag($event, type.qtype, type.choices)" v-for="type in qtypeList" :key="type.title" :id="type.title">{{type.title}}</li>
+            </ul>
+            <button class="btn btn-primary mx-auto btn-block mt-5" type="submit" :disabled="button_disable" @click.prevent="questionSaveUpdate()">{{ buttonText }}</button>
+        </div>
+        <div class="col-9">
+            <h4 class="absoulte-canvas">Canvas</h4>
+            <div class="jumbotron canvas" @drop="drop($event)" @dragover="allowDrop($event)">
+                <div class="card mb-4" v-for="(item, index) in questions" :key="index">
+                    <div class="card-header">
+                            <span v-if="updateQuestion[index].indx" class="row">
+                                <span class="col">Question No {{index+1}}</span>
+                                <input type="text" class="form-control form-control-sm col-8" v-model="item.q_name" placeholder="Enter Survey Question" autofocus @blur="updateQuestionFn(index, false)">
+                                <button class="btn btn-secondary btn-sm col ml-1" type="button" @click="updateQuestionFn(index, false)">Update</button>
+                            </span>
+                            <span v-else class="row">
+                                <span class="col">Question No {{index+1}}</span>
+                                <h5 class="card-title col-8" @click="updateQuestionFn(index, true)">{{item.q_name||q_name_placeholder}}</h5>
+                                <i class="fas fa-edit col" @click="updateQuestionFn(index, true)"></i>
+                            </span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-text">
+                            <LongText v-if="item.qtype=='longText'" :setter="true"/>
+                            <ShortText v-else-if="item.qtype=='shortText'" :setter="true"/>
+                            <CheckBox v-else-if="item.qtype=='checkBox'" :choices="item.qchoices" :setter="true"/>
+                            <Radio v-else-if="item.qtype=='radio'" :choices="item.qchoices" :setter="true" @buttonDisable="buttonDisable"/>
+                            <Rating v-else-if="item.qtype=='rating'" :choices="item.qchoices" :setter="true"/>
+                            <Date v-else-if="item.qtype=='date'" :setter="true"/>
+                            <Time v-else-if="item.qtype=='time'" :setter="true"/>
+                        </span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="custom-control custom-switch float-right">
+                            <input type="checkbox" class="custom-control-input" v-model="item.is_required" :id="'customSwitch'+index">
+                            <label class="custom-control-label" :for="'customSwitch'+index">Required</label>
                         </div>
+                        <i class="fas fa-trash mr-4 float-right" @click="deleteItem(index)"></i>
+                        <i class="fas fa-plus mr-4 float-right" @click="addItem('radio')"></i>
                     </div>
                 </div>
-                <div class="card-body">
-                    <span class="question-text">
-                        <h5 class="card-title">{{item.q_name||q_name_placeholder}}</h5>
-                        <input type="text" class="form-control col-6" v-model="item.q_name" placeholder="Enter Survey Question">
-                    </span>
-                    <p class="card-text mt-2">
-                        <LongText v-if="item.qtype=='longText'" :setter="true"/>
-                        <ShortText v-else-if="item.qtype=='shortText'" :setter="true"/>
-                        <Dropdown v-else-if="item.qtype=='dropdown'" :choices="item.qchoices" :setter="true"/>
-                        <Radio v-else-if="item.qtype=='radio'" :choices="item.qchoices" :setter="true" @buttonDisable="buttonDisable"/>
-                    </p>
-                </div>
-                <div class="card-footer">
-                    <div class="custom-control custom-switch float-right">
-                        <input type="checkbox" class="custom-control-input" v-model="item.is_required" :id="'customSwitch'+index">
-                        <label class="custom-control-label" :for="'customSwitch'+index">Required</label>
-                    </div>
-                    <i class="fas fa-trash mr-4 float-right" @click="deleteItem(questions, index)"></i>
-                    <i class="fas fa-plus mr-4 float-right" @click="addItem(questions)"></i>
-                </div>
             </div>
-            <i class="fas fa-plus mr-4 float-right" @click="addItem(questions)"></i>
-            <button class="btn btn-primary mx-auto col-2" type="submit" :disabled="button_disable" @click.prevent="questionSaveUpdate()">{{ buttonText }}</button>
         </div>
-
-        <div class="col-4">
-            {{questions}}
-        </div>
-        <div class="toast show" :style="'background-color:'+color" role="alert" aria-live="assertive" aria-atomic="true" v-if="enableToast">
-            <div class="toast-body">
-                {{ toastText }}
-            </div>
+    </div>
+    <div class="toast show" :style="'background-color:'+color" role="alert" aria-live="assertive" aria-atomic="true" v-if="enableToast">
+        <div class="toast-body">
+            {{ toastText }}
         </div>
     </div>
 </div>
@@ -56,10 +64,10 @@
 import {url} from '@/urls';
 import {service} from '@/services';
 import * as _ from 'underscore';
-import { CheckBox, Date, Dropdown, LongText, Radio, Rating, ShortText, Time } from './../QTypes';
+import { CheckBox, Date, LongText, Radio, Rating, ShortText, Time } from './../QTypes';
 export default {
     components:{
-        CheckBox, Date, Dropdown, LongText, Radio, Rating, ShortText, Time
+        CheckBox, Date, LongText, Radio, Rating, ShortText, Time
     },
     data(){
         return {
@@ -67,33 +75,54 @@ export default {
             qtypeList: [
                 { qtype:'shortText', title:'Short Text', choices: ''},
                 { qtype:'longText', title:'Long Text', choices: ''},
-                { qtype:'radio', title:'Multiple Choice', choices: []},
-                { qtype:'dropdown', title:'Dropdown', choices: []},
+                { qtype:'radio', title:'Multiple Choice', choices: [{r_name:''}]},
+                { qtype:'checkBox', title:'Check Box', choices: [{c_name:''}]},
+                { qtype:'rating', title:'Rating', choices: {min:0, max:10}},
+                { qtype:'date', title:'Date', choices: ''},
+                { qtype:'time', title:'Time', choices: ''},
             ],
             q_name_placeholder: "Enter Survey Question", 
             enableToast: false,
+            updateQuestion: [],
             loader: false,
             toastText: 'asa',
             buttonText: 'Save',
             error: false,
             isUpdate: false,
-            button_disable:false
+            button_disable:false,
+            color: 'green'
         }
     },
     mounted(){
         this.getQuestions();
     },
     methods:{
-        addItem(item) {
-            item.push({
+        allowDrop(ev) {
+            ev.preventDefault();
+        },
+        drag(ev, type, choices) {
+            ev.dataTransfer.setData("type", type);
+            ev.dataTransfer.setData("choices", JSON.stringify(choices));
+        },
+        drop(ev) {
+            ev.preventDefault();
+            let type = ev.dataTransfer.getData("type");
+            let choices = ev.dataTransfer.getData("choices");
+            this.addItem(type, JSON.parse(choices));
+        },
+        addItem(type, choices) {
+            this.questions.push({
                 q_name: "",
-                qtype: "radio",
-                qchoices: [{r_name:''}],
+                qtype: type,
+                qchoices: choices,
                 is_required: true
             });
+            this.checkQuestions();
+            this.updateQuestion.push({indx:false});
         },
-        deleteItem(questions, index) { 
-            questions.splice(index, 1); 
+        deleteItem(index) { 
+            this.questions.splice(index, 1);
+            this.checkQuestions();
         },
         buttonDisable(variable){
             this.button_disable = variable;
@@ -109,9 +138,15 @@ export default {
                     this.isUpdate = true;
                     this.buttonText = "Update"
                 }
+                this.questions.forEach(item => {
+                    this.updateQuestion.push({indx:false});
+                });
             }).catch(error => {
                 console.log(error)
             })
+        },
+        updateQuestionFn(index, bool){
+            this.updateQuestion[index].indx = bool;
         },
         checkQuestions(){
             let result = this.questions.map(function(item) {return item.q_name;});
@@ -122,9 +157,11 @@ export default {
             else if(result.includes('')){
                 this.toastText =  "Some Question Names are not set.";
                 this.error = true;
+                this.button_disable = false;
             }
             else{
                 this.error = false;
+                this.button_disable = false;
             }
         },
         questionSaveUpdate(){
@@ -169,22 +206,13 @@ export default {
 </script>
 
 <style>
-.question-text > .card-title {
-    display: block;
+.canvas{
+    height: 80vh;
+    overflow-y: auto; 
 }
-.question-text:hover > .card-title {
-    display: none;
+.absoulte-canvas{
+    position: absolute;
+    top:0;
+    left:10;
 }
-.card-title+input[type="text"] {
-    display: none;
-}
-.question-text:hover > .card-title+input[type="text"]  {
-    display: block;
-}
-/* .display{
-    display: block;
-}
-.not-display{
-    display: none;
-} */
 </style>

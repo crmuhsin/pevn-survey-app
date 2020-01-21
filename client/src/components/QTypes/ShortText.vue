@@ -1,7 +1,7 @@
 <template>
 <span>
-    <input type="text" class="form-control col-6" readonly placeholder="Short Text" v-if="setter">
-    <input type="text" class="form-control col-6" v-model="send_value" v-else>
+    <input type="text" class="form-control form-control-sm col-6" readonly placeholder="Short Text" v-if="setter">
+    <input type="text" class="form-control form-control-sm col-6" v-model="send_value" v-else>
 </span>
 </template>
 

@@ -1,8 +1,9 @@
 <template>
 <div class="container">
+    <router-link tag="button" class="btn btn-sm btn-warning float-left ml-2" :to="{name:'Dashboard'}">Back</router-link>
     <div class="loader" v-if="loader"></div>
     <div class="row" v-else>
-        <div class="col-lg-8 col-xl-8">
+        <div class="col-6 mx-auto">
 			<div class="card">
 				<div class="card-body">
 					<h5 class="card-title">New Survey</h5>
@@ -10,11 +11,11 @@
 						<div class="alert alert-danger" v-if="error">
 							<span>{{error}}</span>
 						</div>
-						<div class="form-label-group mb-2">
+						<div class="mb-2">
 							<label for="inputSurveyname">Survey Name</label>
 							<input type="text" id="inputSurveyname" class="form-control" placeholder="Survey Name" v-model="survey.surveyname" autocomplete="off">
 						</div>
-						<div class="form-label-group mb-2">
+						<div class="mb-2">
 							<label for="inputSurveyslug">Survey Slug</label>
 							<input type="text" id="inputSurveyslug" class="form-control" placeholder="Survey Slug" v-model="survey.surveyslug" autocomplete="off">
 						</div>
@@ -63,7 +64,7 @@ export default {
                 service.onPost(url.survey_check_slug, body)
                 .then(result => {
                     if (result.data.rowCount > 0 ) {
-                        this.error = "There is a slug already.";
+                        this.error = "Slug already Taken.";
                         return;
                     }
                     this.surveySaveUpdate();
@@ -83,6 +84,7 @@ export default {
                     if (result.status != 200){
                         this.color = "red"; 
                         this.toastText =  "Something Went wrong";
+                        setTimeout(() => {this.enableToast = false;}, 3000);
                         return;
                     }
                     this.color = "green"; 

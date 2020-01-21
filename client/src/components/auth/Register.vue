@@ -29,7 +29,7 @@
 							<input type="password" id="inputConfirmPassword" class="form-control" placeholder="Password" name="password_conf" v-model="formData.password_conf" autocomplete="off">
 							<label for="inputConfirmPassword">Confirm password</label>
 						</div>
-						<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" @click.prevent="register()">Register</button>
+						<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" @click.prevent="checkEmailExists()">Register</button>
 						<p class="d-block text-center mt-2 small">Already a member, please <a href="login">Sign In</a></p>
 					</form>
 				</div>
@@ -58,6 +58,19 @@ export default {
 		}
 	},
 	methods:{
+		checkEmailExists(){
+            let data = _.clone(this.formData);
+            service.onPost(url.auth_user_check_user, data)
+            .then(result => {
+                if (result.data.rowCount > 0 ) {
+					this.error = "this email already exists."
+                } else {
+                    this.register();
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        },
 		register(){
 			this.error = validators.registerForm(this.formData);
 			if(this.error === '') {
@@ -78,6 +91,20 @@ export default {
 </script>
 
 <style scoped>
+html,
+body {
+	height: 100%;
+}
+
+body {
+	display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+} 
 .card-signin {
   border: 0;
   border-radius: 1rem;
