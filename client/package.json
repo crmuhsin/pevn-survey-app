@@ -16,7 +16,7 @@
     "moment": "^2.24.0",
     "pdfmake": "^0.1.63",
     "popper.js": "^1.16.0",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "vue": "^2.6.6",
     "vue-router": "^3.1.3"
   },
